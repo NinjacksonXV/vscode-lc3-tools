@@ -7,7 +7,7 @@
     "vscode": "^1.88.0"
   },
   "categories": [
-    "Other"
+    "Programming Languages"
   ],
   "activationEvents": [],
   "main": "./out/extension.js",
@@ -17,7 +17,18 @@
         "command": "lc3-assembly.helloWorld",
         "title": "Hello World"
       }
-    ]
+    ],
+    "languages": [{
+      "id": "asm",
+      "aliases": ["LC3 Assembly", "asm"],
+      "extensions": [".asm"],
+      "configuration": "./language-configuration.json"
+    }],
+    "grammars": [{
+      "language": "asm",
+      "scopeName": "source.asm",
+      "path": "./syntaxes/asm.tmLanguage.json"
+    }]
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
