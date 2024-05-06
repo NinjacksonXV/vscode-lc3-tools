@@ -18,17 +18,105 @@
         "title": "Hello World"
       }
     ],
-    "languages": [{
-      "id": "asm",
-      "aliases": ["LC3 Assembly", "asm"],
-      "extensions": [".asm"],
-      "configuration": "./language-configuration.json"
-    }],
-    "grammars": [{
-      "language": "asm",
-      "scopeName": "source.asm",
-      "path": "./syntaxes/asm.tmLanguage.json"
-    }]
+    "languages": [
+      {
+        "id": "lc3asm",
+        "aliases": [
+          "LC3 Assembly",
+          "asm",
+          "lc3asm"
+        ],
+        "extensions": [
+          ".asm"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "lc3asm",
+        "scopeName": "source.asm",
+        "path": "./syntaxes/asm.tmLanguage.json"
+      }
+    ],
+    "colors": [
+      {
+        "id": "lc3asm.register.r1",
+        "description": "Color for R1",
+        "defaults": {
+          "dark": "#0080ff",
+          "light": "errorForeground",
+          "highContrast": "#010203",
+          "highContrastLight": "#feedc3"
+        }
+      },
+      {
+        "id": "lc3asm.register.r2",
+        "description": "Color for R1",
+        "defaults": {
+          "dark": "errorForeground",
+          "light": "errorForeground",
+          "highContrast": "#010203",
+          "highContrastLight": "#feedc3"
+        }
+      },
+      {
+        "id": "lc3asm.register.r3",
+        "description": "Color for R1",
+        "defaults": {
+          "dark": "errorForeground",
+          "light": "errorForeground",
+          "highContrast": "#010203",
+          "highContrastLight": "#feedc3"
+        }
+      },
+      {
+        "id": "lc3asm.register.r4",
+        "description": "Color for R1",
+        "defaults": {
+          "dark": "errorForeground",
+          "light": "errorForeground",
+          "highContrast": "#010203",
+          "highContrastLight": "#feedc3"
+        }
+      },
+      {
+        "id": "lc3asm.register.r5",
+        "description": "Color for R1",
+        "defaults": {
+          "dark": "errorForeground",
+          "light": "errorForeground",
+          "highContrast": "#010203",
+          "highContrastLight": "#feedc3"
+        }
+      },
+      {
+        "id": "lc3asm.register.r6",
+        "description": "Color for R1",
+        "defaults": {
+          "dark": "errorForeground",
+          "light": "errorForeground",
+          "highContrast": "#010203",
+          "highContrastLight": "#feedc3"
+        }
+      },
+      {
+        "id": "lc3asm.register.r7",
+        "description": "Color for R1",
+        "defaults": {
+          "dark": "errorForeground",
+          "light": "errorForeground",
+          "highContrast": "#010203",
+          "highContrastLight": "#feedc3"
+        }
+      }
+    ],
+    "snippets": [
+      {
+        "language": "lc3asm",
+        "path": "./snippets/lc3asm.json"
+      }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
@@ -47,6 +135,7 @@
     "@vscode/test-cli": "^0.0.8",
     "@vscode/test-electron": "^2.3.9",
     "eslint": "^8.57.0",
+    "js-yaml": "^4.1.0",
     "typescript": "^5.4.5"
   }
 }
