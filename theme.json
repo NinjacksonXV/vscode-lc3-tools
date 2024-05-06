@@ -1,0 +1,12 @@
+{
+    "name": "LC3 Assembly Theme",
+    "type": "dark",
+    "tokenColors": [
+        {
+            "scope": "lc3asm.register.41",
+            "settings": {
+                "foreground": "#lc3asm.register.r1" 
+            }
+        }
+    ]
+}
