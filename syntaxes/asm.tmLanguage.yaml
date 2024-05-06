@@ -1,0 +1,49 @@
+# This YAML file is here for easy editing. Install the js-yaml package and run `npx js-yaml syntaxes/asm.tmLanguage.yaml|.json > syntaxes/asm.tmLanguage.json|yaml
+# to convert to/from the given files. 
+
+# Sources: https://github.com/chiragsakhuja/lc3tools/blob/master/src/gui/src/renderer/components/editor/lc3.js
+#          https://github.com/PaperFanz/lc3-assembly-vscode-ext/blob/master/syntaxes/lc3asm.tmLanguage.json
+$schema: https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json
+name: LC3 Assembly
+patterns:
+  - include: '#keywords'
+  - include: '#strings'
+repository:
+  keywords:
+    # (?i) makes all matches case insensitive
+    patterns:
+    # Operate instructions
+      - name: keyword.operator
+        match: (?i)\b(add|and|not)\b
+    # Control Instructions
+      - name: keyword.control.lc3assembly
+        match: (?i)\b(br(n?z?p?)?|jmp|jsr|jsrr|ret|rti|trap)\b
+    # Data Movement Instructions
+      - name: storage.operation.datamv.lc3asm
+        match: (?i)\b(ld|ldi|ldr|lea|st|str|sti)\b
+    # Trap shortcuts
+      - name: support.other.lc3assembly
+        match: (?i)\b(getc|halt|in|out|puts)\b
+    # Registers
+      - name: lc3asm.register.r1
+        match: (?i)\b(?:r(?:[1]))\b
+    # External/Assembler
+      - name: support.preprocessor.lc3assembly
+        match: \.(?i)\b(blkw|end|external|fill|orig|stringz)\b
+    # Hexadecimal constants
+      - name: constant.numeric.hex
+        match: (?i)\bx-?[A-F0-9]+\b
+    # Hexadecimal constants
+      - name: constant.numeric.dec
+        match: \#?-?([0-9]+)
+    # Character constants
+      - name: constant.character
+        match: \\b(?i)x-?[A-F0-9]+\\b
+  strings:
+    name: string.quoted.double.asm
+    begin: '"'
+    end: '"'
+    patterns:
+      - name: constant.character.escape.asm
+        match: \\.
+scopeName: source.asm
