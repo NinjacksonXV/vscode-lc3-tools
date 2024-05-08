@@ -11,5 +11,7 @@
     // symbols that can be used to surround a selection
     "surroundingPairs": [
         ["\"", "\""],
-    ]
+    ],
+    // edited so that '.' can be used to start a blockwrite.
+    "wordPattern": "(-?\\d*\\.\\d\\w*)|([^\\`\\~\\!\\@\\#\\%\\^\\&\\*\\(\\)\\-\\=\\+\\[\\{\\]\\}\\\\\\|\\;\\:\\'\\\"\\,\\<\\>\\/\\?\\s]+)"
 }
