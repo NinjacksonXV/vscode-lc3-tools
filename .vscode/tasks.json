@@ -17,7 +17,6 @@
 			}
 		},
 		{
-			"group": "default",
 			"label": "Convert yaml to json on save",
 			"type": "shell",
 			"command": "npx js-yaml ${file} > syntaxes/asm.tmLanguage.json",
