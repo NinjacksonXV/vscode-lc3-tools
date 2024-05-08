@@ -1,4 +1,4 @@
-# lc3-assembly
+# vscode-lc3-tools
 
 Work-in-progress [LC3Tools](https://github.com/chiragsakhuja/lc3tools/tree/master) integration into VS Code, including editing, autocomplete, assembly/running, linting (WIP), and more.
 
