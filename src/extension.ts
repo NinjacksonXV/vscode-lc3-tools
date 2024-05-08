@@ -8,8 +8,7 @@ class LC3HoverProvider implements vscode.HoverProvider {
 	public provideHover(document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken): vscode.ProviderResult<vscode.Hover> {
 
 		let symbol = document.getText(document.getWordRangeAtPosition(position));
-
-
+		console.log(symbol);
 		if (RegExp("and", "i").test(symbol)) {
 			return new vscode.Hover("Howdy!");
 		}
@@ -24,6 +23,7 @@ class LC3CompletionProvider implements vscode.CompletionItemProvider {
 
 	public provideCompletionItems(document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken, context: vscode.CompletionContext): vscode.ProviderResult<vscode.CompletionItem[] | vscode.CompletionList<vscode.CompletionItem>> {
 
+		token.onCancellationRequested(function (event) { console.log('event happened ' + event); });
 		const add = new vscode.CompletionItem('ADD', vscode.CompletionItemKind.Operator);
 		add.insertText = new vscode.SnippetString('ADD\tR${1:-A}, R${2:-B}, ${0:C}');
 		add.detail = "ADD R-A, R-B, (R-)C";
@@ -118,7 +118,8 @@ class LC3CompletionProvider implements vscode.CompletionItemProvider {
 
 		// Assembler directives
 		/** TO-DO:
-		 *  - Figure out how to get the snippet to appear when typing "." For now, it fails and only appears with every other character, which messes it up.
+		 *  -[x] Figure out how to get the snippet to appear when typing "." For now, it fails and only appears with every other character, which messes it up.
+		 *  - Check for cancellation on any preprocessor directive that uses a label, which erases the label and the tab. 
 		 *  - Add completionItemKinds to each item. Low priority. 
 		 */
 		const orig = new vscode.CompletionItem('.ORIG');
@@ -126,26 +127,34 @@ class LC3CompletionProvider implements vscode.CompletionItemProvider {
 		orig.documentation = new vscode.MarkdownString("Tells the assembler where the program begins and ends");
 
 		const blkw = new vscode.CompletionItem(".BLKW", vscode.CompletionItemKind.Keyword);
-		// blkw.filterText = '.';
-		// blkw.insertText = new vscode.SnippetString('\t${1:LABEL}\.BLKW\t${0:1}');
-		blkw.insertText = new vscode.SnippetString('.BLKW\t${0:1}');
-		
+		blkw.insertText = new vscode.SnippetString('${0:LABEL}\t.BLKW\t${1:1}');
 		blkw.documentation = new vscode.MarkdownString("Reserve the specified number of memory locations");
 
-		const end = new vscode.CompletionItem('\.END');
+		const end = new vscode.CompletionItem('.END');
 		end.documentation = new vscode.MarkdownString("Tells the assembler where the program ends");
 
-		const external = new vscode.CompletionItem('\.EXTERNAL');
+		const external = new vscode.CompletionItem('.EXTERNAL');
 		external.insertText = new vscode.SnippetString('$.EXTERNAL\t${2:1}${0}');
 		external.documentation = new vscode.MarkdownString("Provide a path to an external program.");
 
-		const fill = new vscode.CompletionItem('\.FILL');
+		const fill = new vscode.CompletionItem('.FILL');
 		fill.insertText = new vscode.SnippetString('${1:LABEL}\t.BLKW\t${2:1}${0}');
 		fill.documentation = new vscode.MarkdownString("Reserve this memory location");
 
 		const stringz = new vscode.CompletionItem('.STRINGZ');
 		stringz.insertText = new vscode.SnippetString('${1:LABEL}\t.BLKW\t${2:1}${0}');
 		stringz.documentation = new vscode.MarkdownString("Reserve the specified number of memory locations");
+
+
+		const header = new vscode.CompletionItem(';**');
+		header.insertText = "; **********************************\n" +
+			";\n;\n" +
+			"; Register Dictionary\n" +
+			"; R1: \n" +
+			"; R2: \n" +
+			"; R3: \n" +
+			"; R4: \n" +
+			"; **********************************\n";
 
 		return [
 			add,
@@ -171,17 +180,15 @@ class LC3CompletionProvider implements vscode.CompletionItemProvider {
 			trap_putsp,
 			trap_halt,
 			orig,
-			blkw
+			blkw,
+			header
 		];
 
 	}
 }
 
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
 
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
 	// This line of code will only be executed once when your extension is activated
 	console.log('Congratulations, your extension "lc3-assembly" is now active!');
 
