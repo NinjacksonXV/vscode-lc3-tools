@@ -35,10 +35,10 @@ repository:
         match: (?i)\bx-?[A-F0-9]+\b
     # Hexadecimal constants
       - name: constant.numeric.dec
-        match: \#?-?([0-9]+)
+        match: "[ | ,]#-?[0-9]+\b" # This is a stupid hack. Gotta figure out a way around it.
     # Character constants
       - name: constant.character
-        match: \\b(?i)x-?[A-F0-9]+\\b
+        match: \b(?i)x-?[A-F0-9]+\b
   strings:
     name: string.quoted.double.asm
     begin: '"'
