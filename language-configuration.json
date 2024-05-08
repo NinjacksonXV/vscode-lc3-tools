@@ -12,6 +12,6 @@
     "surroundingPairs": [
         ["\"", "\""],
     ],
-    // edited so that '.' can be used to start a blockwrite.
-    "wordPattern": "(-?\\d*\\.\\d\\w*)|([^\\`\\~\\!\\@\\#\\%\\^\\&\\*\\(\\)\\-\\=\\+\\[\\{\\]\\}\\\\\\|\\:\\'\\\"\\,\\<\\>\\/\\?\\s]+)"
+    // edited so that '.' can be used to start a blockwrite. Need to fix tabs. For now, they return the symbol to the right of it. 
+    "wordPattern": "(-?\\d*\\.\\d\\w*)|([^\\`\\~\\!\\@\\%\\^\\&\\*\\(\\)\\-\\=\\+\\[\\{\\]\\}\\\\\\|\\:\\'\\\"\\,\\<\\>\\/\\?\\s\\t]+)|([ ]+)"
 }
