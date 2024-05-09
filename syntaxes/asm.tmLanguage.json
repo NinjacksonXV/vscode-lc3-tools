@@ -29,11 +29,11 @@
           "match": "(?i)\\b(getc|halt|in|out|puts)\\b"
         },
         {
-          "name": "lc3asm.register.r1",
-          "match": "(?i)\\b(?:r(?:[1]))\\b"
+          "name": "variable.other.lc3tools",
+          "match": "(?i)\\b(?:r(?:[0-7]))\\b"
         },
         {
-          "name": "keyword.control.directive.conditional",
+          "name": "keyword.control.directive.conditional.lc3tools",
           "match": "\\.(?i)\\b(blkw|end|external|fill|orig|stringz)\\b"
         },
         {
@@ -47,6 +47,10 @@
         {
           "name": "constant.numeric.hexadecimal.lc3tools",
           "match": "\\b(?i)x-?[A-F0-9]+\\b"
+        },
+        {
+          "name": "comment.lc3tools",
+          "match": ";(.*)$"
         }
       ]
     },
