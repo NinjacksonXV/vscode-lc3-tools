@@ -2,19 +2,193 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 
-let diagnosticCollection: vscode.DiagnosticCollection;
+/** Template:
+   "┌─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┐"+
+   "│ │ │ │ │ │ │ │ │ │ │ │ │ │ │ │ │"+
+   "└─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┘"
+ */
 
 class LC3HoverProvider implements vscode.HoverProvider {
 	public provideHover(document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken): vscode.ProviderResult<vscode.Hover> {
 
+		// Not 100% sure that a big if-else block is the way to do this...
+		// Using test() is the WRONG way to do this, as it's too lax. I have to do stupid
+		// early returns to catch specific strings first before more broad ones, i.e. jsrr before jsr.
+
 		let symbol = document.getText(document.getWordRangeAtPosition(position));
 		console.log(symbol);
 		if (RegExp("and", "i").test(symbol)) {
-			return new vscode.Hover("Howdy!");
+			let andDoc = new vscode.MarkdownString(
+				// The display font is not monospaced, and the spaces mess it up.
+				// "<p style=\"color: red;\">" +
+				// "┌─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┐\n\n" +
+				// "│0 0 0 1│ DR  │ SR1 │0│0│0│ SR2 │\n\n" +
+				// "└─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┘\n\n" +
+				// "				or				  \n\n" +
+				// "┌─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┐\n\n" +
+				// "│0 0 0 1│ DR  │ SR1 │1│  imm5   │\n\n" +
+				// "└─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┘\n\n" +
+				"If bit [5] is 0, the second source operand is obtained from SR2. If bit [5] is 1, the" +
+				"second source operand is obtained by sign-extending the imm5 field to 16 bits." +
+				"In both cases, the second source operand is added to the contents of SR1 and the" +
+				"result stored in DR. The condition codes are set, based on whether the result is" +
+				"negative, zero, or positive.\n\n" +
+				"Examples:\n\n" +
+				"ADD R2, R3, R4 ; R2 ← R3 + R4\n\n" +
+				"ADD R2, R3, #7 ; R2 ← R3 + 7" //+
+				// "</p>"
+			);
+			return new vscode.Hover(andDoc);
 		}
 		else if (RegExp("add", "i").test(symbol)) {
-			return new vscode.Hover("Hello there!");
+			return new vscode.Hover(
+				"If bit [5] is 0, the second source operand is obtained from SR2. If bit [5] is 1,\n\n" +
+				"the second source operand is obtained by sign-extending the imm5 field to 16\n\n" +
+				"bits. In either case, the second source operand and the contents of SR1 are bitwise ANDed and the result stored in DR. The condition codes are set, based on\n\n" +
+				"whether the binary value produced, taken as a 2’s complement integer, is negative,\n\n" +
+				"zero, or positive.\n\n" +
+				"Examples\n\n" +
+				"AND R2, R3, R4 ;R2 ← R3 AND R4\n\n" +
+				"AND R2, R3, #7 ;R2 ← R3 AND 7\n\n"
+			);
 		}
+		else if (RegExp("br", "i").test(symbol)) {
+			return new vscode.Hover(
+				"The condition codes specified by bits[11: 9]are tested.If bit[11] is 1, N is tested;\n\n" +
+				"if bit[11] is 0, N is not tested.If bit[10] is 1, Z is tested, etc. If any of the condition codes tested is 1, the program branches to the memory location specified by\n\n" +
+				"adding the sign - extended PCoffset9 field to the incremented PC.\n\n" +
+				"Examples\n\n" +
+				"BRzp LOOP; Branch to LOOP if the last result was zero or positive.\n\n" +
+				"BR† NEXT; Unconditionally branch to NEXT.\n\n"
+			);
+		}
+		else if (RegExp("jmp", "i").test(symbol)) {
+			return new vscode.Hover(
+				"The program unconditionally jumps to the location specified by the contents of\n\n" +
+				"the base register. Bits [8:6] identify the base register.\n\n" +
+				"Examples\n\n" +
+				"JMP R2 ; PC ← R2\n\n"
+			);
+		}
+		else if (RegExp("jsrr", "i").test(symbol)) { // Here not to override jsr
+			return new vscode.Hover("Didn't split this one up yet.");
+		}
+		else if (RegExp("jsr", "i").test(symbol)) {
+			return new vscode.Hover("Didn't split this one up yet.");
+		}
+		else if (RegExp("ldi", "i").test(symbol)) {
+			return new vscode.Hover(
+				"An address is computed by sign-extending bits [8:0] to 16 bits and adding this\n\n" +
+				"value to the incremented PC. What is stored in memory at this address is the\n\n" +
+				"address of the data to be loaded into DR. If either address is to privileged memory and PSR[15]=1, initiate ACV exception. If not, the data is loaded and the\n\n" +
+				"condition codes are set, based on whether the value loaded is negative, zero, or\n\n" +
+				"positive.\n\n" +
+				"Example\n\n" +
+				"LDI R4, ONEMORE ; R4 ← mem[mem[ONEMORE]]\n\n"
+			);
+		}
+		else if (RegExp("ldr", "i").test(symbol)) {
+			return new vscode.Hover(
+				"An address is computed by sign-extending bits [5:0] to 16 bits and adding this\n\n" +
+				"value to the contents of the register specified by bits [8:6]. If the computed address\n\n" +
+				"is to privileged memory and PSR[15]=1, initiate ACV exception. If not, the contents of memory at this address is loaded into DR. The condition codes are set,\n\n" +
+				"based on whether the value loaded is negative, zero, or positive.\n\n" +
+				"Example\n\n" +
+				"LDR R4, R2, #−5 ; R4 ← mem[R2 − \n\n5]"
+			);
+		}
+		else if (RegExp("ld", "i").test(symbol)) { // This is down here so that it doesn't take priority over the first two... stupid.
+			return new vscode.Hover(
+				"An address is computed by sign-extending bits [8:0] to 16 bits and adding\n\n" +
+				"this value to the incremented PC. If the address is to privileged memory and\n\n" +
+				"PSR[15]=1, initiate ACV exception. If not, the contents of memory at this address\n\n" +
+				"is loaded into DR. The condition codes are set, based on whether the value loaded\n\n" +
+				"is negative, zero, or positive.\n\n" +
+				"Example\n\n" +
+				"LD R4, VALUE ; R4 ← mem[VALUE]\n\n"
+			);
+		}
+		else if (RegExp("lea", "i").test(symbol)) {
+			return new vscode.Hover(
+				"An address is computed by sign-extending bits [8:0] to 16 bits and adding this\n\n" +
+				"value to the incremented PC. This address is loaded into DR.‡\n\n" +
+				"Example\n\n" +
+				"LEA R4, TARGET ; R4 ← address of TARGET.\n\n"
+			);
+		}
+		else if (RegExp("not", "i").test(symbol)) {
+			return new vscode.Hover(
+				"The bit-wise complement of the contents of SR is stored in DR. The condition codes are set, based on whether the binary value produced, taken as a 2’s\n\n" +
+				"complement integer, is negative, zero, or positive.\n\n" +
+				"Example\n\n" +
+				"NOT R4, R2 ; R4 ← NOT(R2)\n\n"
+			);
+		}
+		else if (RegExp("ret", "i").test(symbol)) {
+			return new vscode.Hover(
+				"The PC is loaded with the contents of R7," +
+				"which contains the linkage back to the instruction following the subroutine call instruction. Its normal use is to cause a return from a" +
+				"previous JSR(R) instruction.\n\n" +
+				"Examples\n\n" +
+				"RET ; PC ← R7\n\n"
+			);
+		}
+		else if (RegExp("rti", "i").test(symbol)) {
+			return new vscode.Hover(
+				"If the processor is running in User mode, a privilege mode exception occurs. If\n\n" +
+				"in Supervisor mode, the top two elements on the system stack are popped and\n\n" +
+				"loaded into PC, PSR. After PSR is restored, if the processor is running in User\n\n" +
+				"mode, the SSP is saved in Saved SSP, and R6 is loaded with Saved USP.\n\n" +
+				"Example\n\n" +
+				"RTI ; PC, PSR ← top two values popped off stack\n\n"
+			);
+		}
+		else if (RegExp("sti", "i").test(symbol)) {
+			return new vscode.Hover(
+				"If the computed address is to privileged memory and PSR[15]=1, initiate ACV\n\n" +
+				"exception. If not, the contents of the register specified by SR is stored in the\n\n" +
+				"memory location whose address is computed by sign-extending bits [5:0] to 16\n\n" +
+				"bits and adding this value to the contents of the register specified by bits [8:6].\n\n" +
+				"Example\n\n" +
+				"STR R4, R2, #5 ; mem[R2+5] ← R4\n\n"
+			);
+		}
+		else if (RegExp("str", "i").test(symbol)) {
+			return new vscode.Hover(
+				"If either computed address is to privileged memory and PSR[15]=1, initiate\n\n" +
+				"ACV exception. If not, the contents of the register specified by SR is stored\n\n" +
+				"in the memory location whose address is obtained as follows: Bits [8:0] are signextended to 16 bits and added to the incremented PC. What is in memory at this\n\n" +
+				"address is the address of the location to which the data in SR is stored.\n\n" +
+				"Example\n\n" +
+				"STI R4, NOT HERE ; mem[mem[NOT HERE]] ← R4\n\n"
+			);
+		}
+		else if (RegExp("st", "i").test(symbol)) { // This is down here so that it doesn't take priority over the first two... stupid.
+			return new vscode.Hover(
+				"If the computed address is to privileged memory and PSR[15]=1, initiate ACV\n\n" +
+				"exception. If not, the contents of the register specified by SR is stored in the\n\n" +
+				"memory location whose address is computed by sign-extending bits [8:0] to 16\n\n" +
+				"bits and adding this value to the incremented PC.\n\n" +
+				"Example\n\n" +
+				"ST R4, HERE ; mem[HERE] ← R4\n\n"
+			);
+		}
+		else if (RegExp("trap", "i").test(symbol)) {
+			return new vscode.Hover(
+				"If the the program is executing in User mode, the User Stack Pointer must be\n\n" +
+				"saved and the System Stack Pointer loaded. Then the PSR and PC are pushed\n\n" +
+				"on the system stack. (This enables a return to the instruction physically following the TRAP instruction in the original program after the last instruction in the\n\n" +
+				"service routine (RTI) has completed execution.) Then the PC is loaded with the\n\n" +
+				"starting address of the system call specified by trapvector8. The starting address\n\n" +
+				"is contained in the memory location whose address is obtained by zero-extending\n\n" +
+				"trapvector8 to 16 bits.\n\n" +
+				"Example\n\n" +
+				"TRAP x23 ; Directs the operating system to execute the IN system call.\n\n" +
+				"; The starting address of this system call is contained in\n\n" +
+				"; memory location x0023.\n\n"
+			);
+		}
+
 		else { return null; };
 	}
 }
@@ -191,34 +365,39 @@ class LC3CompletionProvider implements vscode.CompletionItemProvider {
 }
 
 export function activate(context: vscode.ExtensionContext) {
+	console.log(vscode.window.activeTerminal?.processId);
 
 	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "lc3-assembly" is now active!');
-
+	// console.log('Congratulations, your extension "lc3-assembly" is now active!');
+	let binPath = vscode.workspace.getConfiguration('lc3tools').get('pathToExecutables');
 	const lc3CompletionProvider = vscode.languages.registerCompletionItemProvider('lc3asm', new LC3CompletionProvider);
 	const lc3HoverProvider = vscode.languages.registerHoverProvider('lc3asm', new LC3HoverProvider);
 
 	// The command has been defined in the package.json file
 	// Now provide the implementation of the command with registerCommand
 	// The commandId parameter must match the command field in package.json
-	let disposable = vscode.commands.registerCommand('vscode-lc3-tools.helloWorld', () => {
-		// The code you place here will be executed every time your command is executed
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from LC3 Assembly!');
+	let assemble = vscode.commands.registerCommand('vscode-lc3-tools.assemble', () => {
+		vscode.window.activeTextEditor?.document.save;
+		if (vscode.window.activeTerminal?.name === "simulator") { vscode.window.activeTerminal?.sendText('quit'); }
+		let filePath = vscode.window.activeTextEditor?.document.fileName;
+		vscode.window.activeTerminal?.sendText(binPath + '\\assembler.exe ' + filePath);
 	});
 
-	diagnosticCollection = vscode.languages.createDiagnosticCollection('lc3asm');
+	let assembleAndRun = vscode.commands.registerCommand('vscode-lc3-tools.run', () => {
+		vscode.window.activeTextEditor?.document.save;
+		if (vscode.window.activeTerminal?.name === "simulator") { vscode.window.activeTerminal?.sendText('quit'); }
+		let filePath = vscode.window.activeTextEditor?.document.fileName;
+		vscode.window.activeTerminal?.sendText(binPath + '\\assembler.exe ' + filePath);
+		let folder = filePath?.substring(0, filePath.lastIndexOf('\\'));
+		let objectFile = filePath?.substring(filePath.lastIndexOf('\\'), filePath.lastIndexOf('.')) + '.obj';
+		vscode.window.activeTerminal?.sendText(binPath + '\\simulator.exe ' + folder + objectFile);
+	});
 
-	context.subscriptions.push(disposable);
-	context.subscriptions.push(diagnosticCollection);
+	// diagnosticCollection = vscode.languages.createDiagnosticCollection('lc3asm');
+
+	context.subscriptions.push(assemble, assembleAndRun);
+	// context.subscriptions.push(diagnosticCollection);
 	context.subscriptions.push(lc3HoverProvider, lc3CompletionProvider);
 }
 
-// function onChange()
-// {
-// 	let uri = vscode.window.activeTextEditor?.document.uri;
-// 	check(uri?.fsPath, )
-// }
-
-// This method is called when your extension is deactivated
 export function deactivate() { }
