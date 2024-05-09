@@ -13,19 +13,19 @@
     "keywords": {
       "patterns": [
         {
-          "name": "keyword.operator",
+          "name": "entity.name.function.lc3tools",
           "match": "(?i)\\b(add|and|not)\\b"
         },
         {
-          "name": "keyword.control.lc3assembly",
+          "name": "keyword.control.lc3tools",
           "match": "(?i)\\b(br(n?z?p?)?|jmp|jsr|jsrr|ret|rti|trap)\\b"
         },
         {
-          "name": "storage.operation.datamv.lc3asm",
+          "name": "storage.operation.datamv.lc3tools",
           "match": "(?i)\\b(ld|ldi|ldr|lea|st|str|sti)\\b"
         },
         {
-          "name": "support.other.lc3assembly",
+          "name": "support.other.lc3tools",
           "match": "(?i)\\b(getc|halt|in|out|puts)\\b"
         },
         {
@@ -33,19 +33,19 @@
           "match": "(?i)\\b(?:r(?:[1]))\\b"
         },
         {
-          "name": "support.preprocessor.lc3assembly",
+          "name": "keyword.control.directive.conditional",
           "match": "\\.(?i)\\b(blkw|end|external|fill|orig|stringz)\\b"
         },
         {
-          "name": "constant.numeric.hex",
+          "name": "constant.numeric.hexadecimal.lc3tools",
           "match": "(?i)\\bx-?[A-F0-9]+\\b"
         },
         {
-          "name": "constant.numeric.dec",
-          "match": "[ | ,]#-?[0-9]+"
+          "name": "constant.numeric.decimal.lc3tools",
+          "match": "[ | ,]#?-?[0-9]+"
         },
         {
-          "name": "constant.character",
+          "name": "constant.numeric.hexadecimal.lc3tools",
           "match": "\\b(?i)x-?[A-F0-9]+\\b"
         }
       ]
