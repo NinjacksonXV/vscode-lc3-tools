@@ -15,10 +15,11 @@
     "commands": [
       {
         "command": "vscode-lc3-tools.assemble",
-        "title": "Assemble Source File"
+        "title": "Assemble current file"
       },
       {
-        "command": "lc3-assembly"
+        "command": "vscode-lc3-tools.run",
+        "title": "Assemble and Run current file"
       }
     ],
     "languages": [
