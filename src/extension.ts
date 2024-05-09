@@ -126,7 +126,7 @@ class LC3CompletionProvider implements vscode.CompletionItemProvider {
 		orig.insertText = new vscode.SnippetString('.ORIG\tx${1:3000}\n\t$0\n.END');
 		orig.documentation = new vscode.MarkdownString("Tells the assembler where the program begins and ends");
 
-		const blkw = new vscode.CompletionItem(".BLKW", vscode.CompletionItemKind.Keyword);
+		const blkw = new vscode.CompletionItem(".BLKW");
 		blkw.insertText = new vscode.SnippetString('${0:LABEL}\t.BLKW\t${1:1}');
 		blkw.documentation = new vscode.MarkdownString("Reserve the specified number of memory locations");
 
@@ -134,15 +134,15 @@ class LC3CompletionProvider implements vscode.CompletionItemProvider {
 		end.documentation = new vscode.MarkdownString("Tells the assembler where the program ends");
 
 		const external = new vscode.CompletionItem('.EXTERNAL');
-		external.insertText = new vscode.SnippetString('$.EXTERNAL\t${2:1}${0}');
+		external.insertText = new vscode.SnippetString('$.EXTERNAL\t\"${2}\"');
 		external.documentation = new vscode.MarkdownString("Provide a path to an external program.");
 
 		const fill = new vscode.CompletionItem('.FILL');
-		fill.insertText = new vscode.SnippetString('${1:LABEL}\t.BLKW\t${2:1}${0}');
+		fill.insertText = new vscode.SnippetString('${0:LABEL}\t.FILL\t${1}');
 		fill.documentation = new vscode.MarkdownString("Reserve this memory location");
 
 		const stringz = new vscode.CompletionItem('.STRINGZ');
-		stringz.insertText = new vscode.SnippetString('${1:LABEL}\t.BLKW\t${2:1}${0}');
+		stringz.insertText = new vscode.SnippetString('${0:LABEL}\t.BLKW\t\"${1}\"');
 		stringz.documentation = new vscode.MarkdownString("Reserve the specified number of memory locations");
 
 
@@ -181,7 +181,10 @@ class LC3CompletionProvider implements vscode.CompletionItemProvider {
 			trap_halt,
 			orig,
 			blkw,
-			header
+			fill,
+			stringz,
+			external,
+			header,
 		];
 
 	}
