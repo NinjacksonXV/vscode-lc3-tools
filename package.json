@@ -12,6 +12,18 @@
   "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
+    "configuration":[
+      {
+        "title": "LC3 Tools",
+        "properties": {
+          "lc3tools.pathToExecutables": 
+          {
+            "type": ["string", "null"],
+            "description": "Path to the folder containing the CLI LC3 Tools binaries."
+          }
+        }
+      }
+    ],
     "commands": [
       {
         "command": "vscode-lc3-tools.assemble",
@@ -19,7 +31,7 @@
       },
       {
         "command": "vscode-lc3-tools.run",
-        "title": "Assemble and Run current file"
+        "title": "Assemble and run the current file"
       }
     ],
     "languages": [
